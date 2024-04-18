@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 //Render setup
 const renderer = new THREE.WebGLRenderer();
+//const renderer = new THREE.WebGLRenderer( { antialias: true}); //anti alias makes edges sharper
+
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -19,7 +21,7 @@ const scene = new THREE.Scene();
 
 // Create Cube
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00d000 });
+const material = new THREE.MeshLambertMaterial({ color: 0x00d000 }); //Lambert has shading, basic material does not
 const cube = new THREE.Mesh(geometry, material);
 
 // Add Cube to scene
