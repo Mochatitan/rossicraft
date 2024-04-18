@@ -1,6 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
+
 import { World } from './world';
+import { createUI } from './ui';
+
+const devmode = true;
+
+const stats = new Stats(); //stats for fps and stuff
+
 
 //Render setup
 const renderer = new THREE.WebGLRenderer();
@@ -42,11 +50,21 @@ function setupLights() {
     scene.add(ambient);
 }
 
+//add special stuff for the dev
+if(devmode){
+    document.body.append(stats.dom);
+}
+
 
 // Render Loop
 function animate(){
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
+
+    //animate stuff for dev
+    if(devmode){
+        stats.update();
+    }
 }
 
 window.addEventListener('resize', () => {
@@ -56,5 +74,5 @@ window.addEventListener('resize', () => {
 });
 
 setupLights();
-//setupWorld(32);
+if(devmode){ createUI(world);}
 animate();
