@@ -67,8 +67,62 @@ export class World extends THREE.Group {
 
     // Helper Methods
     
-    // Get block at x, y, z
+    /**
+     *  Gets the block data at (x, y, z)
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @returns {{id: number, instanceID: number}}
+     */
     getBlock(x, y, z){
-        return data[x][y][z];    
+        if (this.inBounds(x, y, z)) {
+            return this.data[x][y][z];
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Sets the block id for the block at {x, y, z}
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @param {number} id 
+     */
+    setBlockId(x, y, z, id){
+        if (this.inBounds(x, y, z)) {
+            this.data[x][y][z].id =  id;      
+         } 
+    }
+
+    /**
+     * Sets the block instance id for the block at (x, y, z)
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @param {number} instanceId 
+     */
+    setBlockInstanceId(x, y, z, instanceId) {
+        if (this.inBounds(x, y, z)) {
+            this.data[x][y][z].instanceId = instanceId;
+        }
+    }
+
+    /**
+     *  Checks if the (x, y, z) coordinates are within bounds
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} z 
+     * @returns {boolean}
+     */
+    inBounds(x, y, z) {
+        if( x >= 0 && x < this.size.width &&
+            y >= 0 && y < this.size.height &&
+            z >= 0 && z < this.size.width) 
+        {
+            return true;
+        } else {
+            alert("block not in bounds");
+            return false;
+        }
     }
 }
