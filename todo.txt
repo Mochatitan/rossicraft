@@ -1,1 +1,1 @@
-- use the knowledge i learned from the video introducing three.js to make the renderer automatically update when the window is resized
+https://www.youtube.com/watch?v=tsOTCn0nROI&list=PLtzt35QOXmkKALLv9RzT8oGwN5qwmRjTo

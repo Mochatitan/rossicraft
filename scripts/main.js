@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { World } from './world';
 
 //Render setup
 const renderer = new THREE.WebGLRenderer();
@@ -7,27 +8,24 @@ const renderer = new THREE.WebGLRenderer();
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xADD8E6); //set sky color
+
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(2 , 2, 2);
+camera.position.set(-32, 16, -32);
 camera.lookAt(0, 0, 0);
+
 // Camera Controls
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(16, 0, 16); //make camera look at centre of world
 
 // Scene Setup
 const scene = new THREE.Scene();
-
-// Create Cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshLambertMaterial({ color: 0x00d000 }); //Lambert has shading, basic material does not
-const cube = new THREE.Mesh(geometry, material);
-
-// Add Cube to scene
-scene.add(cube);
-
-
+const world = new World();
+world.generate();
+scene.add(world);
 
 // Lights Setup
 function setupLights() {
@@ -44,6 +42,7 @@ function setupLights() {
     scene.add(ambient);
 }
 
+
 // Render Loop
 function animate(){
     requestAnimationFrame(animate);
@@ -57,4 +56,5 @@ window.addEventListener('resize', () => {
 });
 
 setupLights();
+//setupWorld(32);
 animate();
