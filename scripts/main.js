@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 //Render setup
 const renderer = new THREE.WebGLRenderer();
@@ -10,6 +11,8 @@ document.body.appendChild(renderer.domElement);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(2 , 2, 2);
 camera.lookAt(0, 0, 0);
+// Camera Controls
+const controls = new OrbitControls(camera, renderer.domElement);
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -23,14 +26,33 @@ const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
 
+
+// Lights Setup
+function setupLights() {
+    const light1 = new THREE.DirectionalLight();
+    light1.position.set(1, 1, 1);
+    scene.add(light1);
+
+    const light2 = new THREE.DirectionalLight();
+    light2.position.set(-1, 1, -0.5);
+    scene.add(light2);
+
+    const ambient = new THREE.AmbientLight();
+    ambient.intensity = 0.1;
+    scene.add(ambient);
+}
+
 // Render Loop
 function animate(){
     requestAnimationFrame(animate);
-
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
     renderer.render(scene, camera);
 }
 
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+setupLights();
 animate();
