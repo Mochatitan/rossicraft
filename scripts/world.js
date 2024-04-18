@@ -5,12 +5,45 @@ const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshLambertMaterial({ color: 0x00d000 }); //Lambert has shading, basic material does not
 
 export class World extends THREE.Group {
+    /**
+     * @type {{
+     * id: number,
+     * instanceId: number }
+     * [][][]}
+     */
+    data = [];
+
     constructor(size = {width:64, height: 32}) { //if no size is passed, default will be 32
         super();
         this.size = size;
     }
 
     generate(){
+
+
+    }
+
+    generateTerrain(){
+        this.data = []; //clear data array
+        for (let x = 0; x < this.size.width; x++){
+            const slice = [];
+            for (let y = 0; y < this.size.height; y++){
+                const row = [];
+                for (let z = 0; z < this.size.width; z++){
+                    row.push({
+                        id: 1,
+                        instanceId: null
+                    });
+            
+                }
+                slice.push(row);
+            }
+            this.data.push(slice);
+        }
+
+    }
+
+    generateMeshes(){
         this.clear();
         //initialize instanced mesh
         const maxCount = this.size.width * this.size.width * this.size.height;
@@ -29,5 +62,13 @@ export class World extends THREE.Group {
         }
 
         this.add(mesh);
+    }
+
+
+    // Helper Methods
+    
+    // Get block at x, y, z
+    getBlock(x, y, z){
+        return data[x][y][z];    
     }
 }
