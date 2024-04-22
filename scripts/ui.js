@@ -17,12 +17,26 @@ export function createUI(world){
     terrainFolder.add(world.params.terrain, 'offset', 0, 1, 0.02).name("Offset");
     
     const resourcesFolder = gui.addFolder("Resources");
-    resourcesFolder.add(blocks.stone, 'scarcity', 0, 1).name("Scarcity");
+    
+        // const stoneFolder = resourcesFolder.addFolder("Stone");
 
-    const scaleFolder = resourcesFolder.addFolder("Scale");
-    scaleFolder.add(blocks.stone.scale, "x", 0, 100).name("X");
-    scaleFolder.add(blocks.stone.scale, "y", 0, 100).name("Y");
-    scaleFolder.add(blocks.stone.scale, "z", 0, 100).name("Z");
+        // stoneFolder.add(blocks.stone, 'scarcity', 0, 1).name("Scarcity");
+
+        //     const stoneScaleFolder = stoneFolder.addFolder("Scale");
+        //     stoneScaleFolder.add(blocks.stone.scale, "x", 0, 100).name("X");
+        //     stoneScaleFolder.add(blocks.stone.scale, "y", 0, 100).name("Y");
+        //     stoneScaleFolder.add(blocks.stone.scale, "z", 0, 100).name("Z");
+
+        const coalFolder = resourcesFolder.addFolder("Coal ore");
+
+        coalFolder.add(blocks.coal_ore, "scarcity", 0, 1).name("Scarcity");
+        coalFolder.add(blocks.coal_ore, "ylevel", 0, 64).name("Y-Level");
+
+            const coalScaleFolder = coalFolder.addFolder("Scale");
+            coalScaleFolder.add(blocks.coal_ore.scale, "x", 0, 100).name("X");
+            coalScaleFolder.add(blocks.coal_ore.scale, "y", 0, 100).name("Y");
+            coalScaleFolder.add(blocks.coal_ore.scale, "z", 0, 100).name("Z");
+
 
     
     //gui.add(world, 'generate');

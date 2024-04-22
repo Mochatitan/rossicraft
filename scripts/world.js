@@ -19,16 +19,16 @@ export class World extends THREE.Group {
     params = {
         seed: 0,
         terrain : {
-            scale: 30,
-            magnitude: 0.5,
-            offset: 0.2
+            scale: 64,
+            magnitude: 0.05,
+            offset: 0.75
         },
 
     };
         
     threshold = 0.5;
 
-    constructor(size = {width:64, height: 32}) { //if no size is passed, default will be 32
+    constructor(size = {width:64, height: 80}) { //if no size is passed, default will be 32
         super();
         this.size = size;
     }
@@ -37,8 +37,8 @@ export class World extends THREE.Group {
         const rng = new RNG(this.params.seed);
 
         this.initializeTerrain();
-        this.generateResources(rng);
         this.generateTerrain(rng);
+        this.generateResources(rng);
         this.generateMeshes();
 
     }
@@ -69,23 +69,40 @@ export class World extends THREE.Group {
      * generates resources (coal, stone, etc.) for the rest of the world
      */
     generateResources(rng) {
+        this.generateCoal(rng);
+    }
+
+    generateCoal(rng){
         const simplex = new SimplexNoise(rng);
 
         for(let x = 0; x < this.size.width; x++){
             for(let y = 0; y < this.size.height; y++){
                 for(let z = 0; z < this.size.width; z++){
                     const value = simplex.noise3d(
-                        x/blocks.stone.scale.x, 
-                        y/blocks.stone.scale.y, 
-                        z/blocks.stone.scale.z
+                        x/blocks.coal_ore.scale.x, 
+                        y/blocks.coal_ore.scale.y, 
+                        z/blocks.coal_ore.scale.z
                     );
 
-                    if (value > blocks.stone.scarcity){
-                        this.setBlockId(x, y, z, blocks.stone.id);
+                    if (
+                        (value > blocks.coal_ore.scarcity) && 
+                        (y < blocks.coal_ore.ylevel) && 
+                        (y > blocks.coal_ore.ymiddlelevel)
+                    ){
+                        this.setBlockId(x, y, z, blocks.coal_ore.id);
+                    }
+
+                    if (
+                        (value > (blocks.coal_ore.scarcity+blocks.coal_ore.rarityincrease)) &&
+                        (y < blocks.coal_ore.ymiddlelevel) &&
+                        (y > blocks.coal_ore.ybottomlevel)
+                    ){
+                        this.setBlockId(x, y, z, blocks.coal_ore.id);
                     }
                 }
             }
         }
+
     }
 
     generateTerrain(rng) {
@@ -114,6 +131,10 @@ export class World extends THREE.Group {
                         this.setBlockId(x, y, z, blocks.grass.id);
                     } else if(y > height){
                         this.setBlockId(x, y, z, blocks.empty.id);
+                    } 
+
+                    if(y < height-blocks.stone.depth){
+                        this.setBlockId(x, y, z, blocks.stone.id);
                     }
                 }
             }
