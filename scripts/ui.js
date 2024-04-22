@@ -1,5 +1,5 @@
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-import { blocks } from './blocks';
+import { blocks, resources} from './blocks';
 
 
 export function createUI(world){
@@ -29,13 +29,13 @@ export function createUI(world){
 
         const coalFolder = resourcesFolder.addFolder("Coal ore");
 
-        coalFolder.add(blocks.coal_ore, "scarcity", 0, 1).name("Scarcity");
-        coalFolder.add(blocks.coal_ore, "ylevel", 0, 64).name("Y-Level");
+        coalFolder.add(blocks.coalOre, "scarcity", 0, 1).name("Scarcity");
+        coalFolder.add(blocks.coalOre, "ylevel", 0, 64).name("Y-Level");
 
             const coalScaleFolder = coalFolder.addFolder("Scale");
-            coalScaleFolder.add(blocks.coal_ore.scale, "x", 0, 100).name("X");
-            coalScaleFolder.add(blocks.coal_ore.scale, "y", 0, 100).name("Y");
-            coalScaleFolder.add(blocks.coal_ore.scale, "z", 0, 100).name("Z");
+            coalScaleFolder.add(blocks.coalOre.scale, "x", 0, 100).name("X");
+            coalScaleFolder.add(blocks.coalOre.scale, "y", 0, 100).name("Y");
+            coalScaleFolder.add(blocks.coalOre.scale, "z", 0, 100).name("Z");
 
 
     

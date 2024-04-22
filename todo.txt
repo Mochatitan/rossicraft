@@ -1,1 +1,2 @@
 https://www.youtube.com/watch?v=tsOTCn0nROI&list=PLtzt35QOXmkKALLv9RzT8oGwN5qwmRjTo
+https://github.com/KygekDev/default-textures/tree/master/textures/blocks

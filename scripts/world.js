@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise.js';
 import { RNG } from './rng';
-import { blocks } from './blocks';
+import { blocks, resources } from './blocks';
 
 // Create Cube
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshLambertMaterial(); //Lambert has shading, basic material does not
+//const material = new THREE.MeshLambertMaterial(); //Lambert has shading, basic material does not
 
 export class World extends THREE.Group {
     /**
@@ -69,7 +69,7 @@ export class World extends THREE.Group {
      * generates resources (coal, stone, etc.) for the rest of the world
      */
     generateResources(rng) {
-        this.generateCoal(rng);
+        this.generateCoal();
     }
 
     generateCoal(rng){
@@ -79,25 +79,25 @@ export class World extends THREE.Group {
             for(let y = 0; y < this.size.height; y++){
                 for(let z = 0; z < this.size.width; z++){
                     const value = simplex.noise3d(
-                        x/blocks.coal_ore.scale.x, 
-                        y/blocks.coal_ore.scale.y, 
-                        z/blocks.coal_ore.scale.z
+                        x/blocks.coalOre.scale.x, 
+                        y/blocks.coalOre.scale.y, 
+                        z/blocks.coalOre.scale.z
                     );
 
                     if (
-                        (value > blocks.coal_ore.scarcity) && 
-                        (y < blocks.coal_ore.ylevel) && 
-                        (y > blocks.coal_ore.ymiddlelevel)
+                        (value > blocks.coalOre.scarcity) && 
+                        (y < blocks.coalOre.ylevel) && 
+                        (y > blocks.coalOre.ymiddlelevel)
                     ){
-                        this.setBlockId(x, y, z, blocks.coal_ore.id);
+                        this.setBlockId(x, y, z, blocks.coalOre.id);
                     }
 
                     if (
-                        (value > (blocks.coal_ore.scarcity+blocks.coal_ore.rarityincrease)) &&
-                        (y < blocks.coal_ore.ymiddlelevel) &&
-                        (y > blocks.coal_ore.ybottomlevel)
+                        (value > (blocks.coalOre.scarcity+blocks.coalOre.rarityincrease)) &&
+                        (y < blocks.coalOre.ymiddlelevel) &&
+                        (y > blocks.coalOre.ybottomlevel)
                     ){
-                        this.setBlockId(x, y, z, blocks.coal_ore.id);
+                        this.setBlockId(x, y, z, blocks.coalOre.id);
                     }
                 }
             }
@@ -143,10 +143,24 @@ export class World extends THREE.Group {
 
     generateMeshes(){
         this.clear();
+        //
 
-        const maxCount = this.size.width * this.size.width * this.size.height;
-        const mesh = new THREE.InstancedMesh(geometry, material,  maxCount);
-        mesh.count = 0;
+        // Create a lookup table where key is block ID
+        const meshes = {};
+
+        Object.values(blocks)
+            .filter(blockType => blockType.id !== blocks.empty.id)
+            .forEach(blockType => {
+                const maxCount = this.size.width * this.size.width * this.size.height;
+                const mesh = new THREE.InstancedMesh(geometry, blockType.material,  maxCount);
+                mesh.name = blockType.name;
+                mesh.count = 0;
+
+                meshes[blockType.id] = mesh;
+            });
+            
+        
+
 
         const matrix = new THREE.Matrix4();
 
@@ -154,13 +168,16 @@ export class World extends THREE.Group {
             for(let y = 0; y < this.size.height; y++){
                 for(let z = 0; z < this.size.width; z++){
                     const blockId = this.getBlock(x, y, z).id;
-                    const blockType = Object.values(blocks).find(x => x.id === blockId); // checks all blocks for an id that fits our block id
+                    
+                    if(blockId === blocks.empty.id) continue;
+
+                    const mesh = meshes[blockId];
                     const instanceId = mesh.count;
 
-                    if (blockId !== blocks.empty.id && !this.isBlockObscured(x, y, z)) {
+                    if (!this.isBlockObscured(x, y, z)) {
                         matrix.setPosition(x + 0.5, y + 0.5, z + 0.5); // +0.5 because the center of the box is at the origin but the lower left corner is now lower left corner of first box.
                         mesh.setMatrixAt(instanceId, matrix);
-                        mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
+                        //mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
                         this.setBlockInstanceId(x, y, z, instanceId);
                         mesh.count++;
                     }
@@ -168,7 +185,7 @@ export class World extends THREE.Group {
             }
         }
 
-        this.add(mesh);
+        this.add(...Object.values(meshes));
     }
 
     // Helper Methods
