@@ -4,6 +4,9 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 import { World } from './world';
 import { createUI } from './ui';
+import { Player } from './player';
+
+
 
 const devmode = true;
 
@@ -35,6 +38,7 @@ const world = new World();
 world.generate();
 scene.add(world);
 
+const player = new Player(scene);
 // Lights Setup
 function setupLights() {
     const light1 = new THREE.DirectionalLight();
@@ -59,7 +63,7 @@ if(devmode){
 // Render Loop
 function animate(){
     requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+    renderer.render(scene, player.camera);
 
     //animate stuff for dev
     if(devmode){
