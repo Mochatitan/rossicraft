@@ -6,7 +6,13 @@ import { World } from './world';
 import { createUI } from './ui';
 import { Player } from './player';
 
+import {Howl, Howler} from 'howler';
+import { music } from './music.js'
 
+// const sound = new Howl({
+//     src: ['public/audio/music/sweden.mp3']
+//   });
+music.sweden.play();
 
 const devmode = true;
 

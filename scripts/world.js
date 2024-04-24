@@ -6,7 +6,7 @@ import { blocks, resources } from './blocks';
 // Create Cube
 const geometry = new THREE.BoxGeometry();
 //const material = new THREE.MeshLambertMaterial(); //Lambert has shading, basic material does not
-const showStone = true;
+const showStone = false;
 
 export class World extends THREE.Group {
     /**
@@ -70,7 +70,8 @@ export class World extends THREE.Group {
      * generates resources (coal, stone, etc.) for the rest of the world
      */
     generateResources(rng) {
-        this.generateCoal(rng);
+        //this.generateCoal(rng);
+        this.generateIron(rng);
     }
 
     generateCoal(rng){
@@ -100,6 +101,31 @@ export class World extends THREE.Group {
                     ){
                         this.setBlockId(x, y, z, blocks.coalOre.id);
                     }
+                }
+            }
+        }
+
+    }
+
+    generateIron(rng){
+        const simplex = new SimplexNoise(rng);
+
+        for(let x = 0; x < this.size.width; x++){
+            for(let y = 0; y < this.size.height; y++){
+                for(let z = 0; z < this.size.width; z++){
+                    const value = simplex.noise3d(
+                        x/blocks.ironOre.scale.x, 
+                        y/blocks.ironOre.scale.y, 
+                        z/blocks.ironOre.scale.z
+                    );
+
+                    if (
+                        (value > blocks.ironOre.scarcity) && 
+                        (y < blocks.ironOre.ylevel)
+                    ){
+                        this.setBlockId(x, y, z, blocks.ironOre.id);
+                    }
+
                 }
             }
         }
