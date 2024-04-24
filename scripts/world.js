@@ -6,7 +6,7 @@ import { blocks, resources } from './blocks';
 // Create Cube
 const geometry = new THREE.BoxGeometry();
 //const material = new THREE.MeshLambertMaterial(); //Lambert has shading, basic material does not
-const showStone = false;
+const showStone = true;
 
 export class World extends THREE.Group {
     /**

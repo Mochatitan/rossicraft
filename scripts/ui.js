@@ -2,8 +2,13 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { blocks, resources} from './blocks';
 
 
-export function createUI(world){
+export function createUI(world, player){
+
     const gui = new GUI();
+
+    const playerFolder = gui.addFolder('Player');
+
+    //playerFolder.add(player.toggleCamera());
 
     gui.add(world.size, 'width', 8 , 128, 1).name("Width"); //object is world.size, the thing changing is width, the minimum is 8, maximum is 128, step one at a time,
     gui.add(world.size, 'height', 8 , 128, 1).name("Height");

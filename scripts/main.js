@@ -39,6 +39,7 @@ world.generate();
 scene.add(world);
 
 const player = new Player(scene);
+
 // Lights Setup
 function setupLights() {
     const light1 = new THREE.DirectionalLight();
@@ -61,14 +62,26 @@ if(devmode){
 
 
 // Render Loop
+let previousTime = performance.now();
 function animate(){
+    let currentTime = performance.now();
+    let dt = (currentTime - previousTime) /1000; //time since last frame in seconds
+
     requestAnimationFrame(animate);
-    renderer.render(scene, player.camera);
+    player.applyInputs(dt);
+
+    if(player.playerCamera === false){
+        renderer.render(scene, camera);
+    } else if(player.playerCamera === true){
+        renderer.render(scene, player.camera);
+    }
 
     //animate stuff for dev
     if(devmode){
         stats.update();
     }
+
+    previousTime = currentTime;
 }
 
 window.addEventListener('resize', () => {
@@ -78,5 +91,5 @@ window.addEventListener('resize', () => {
 });
 
 setupLights();
-if(devmode){ createUI(world);}
+if(devmode){ createUI(world, player);}
 animate();
