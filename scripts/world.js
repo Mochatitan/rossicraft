@@ -70,7 +70,7 @@ export class World extends THREE.Group {
      * generates resources (coal, stone, etc.) for the rest of the world
      */
     generateResources(rng) {
-        //this.generateCoal(rng);
+        this.generateCoal(rng);
         this.generateIron(rng);
     }
 

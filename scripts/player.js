@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
+const sprite = new THREE.Mesh( geometry, material ); 
+
+
 export class Player{
 
 
@@ -39,6 +44,7 @@ export class Player{
         this.position.set(32, 64, 32);
         scene.add(this.camera);
         scene.add(this.cameraHelper);
+        scene.add(sprite);
 
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
@@ -64,6 +70,10 @@ export class Player{
 
             document.getElementById("player-position").innerHTML = this.toString();
         }
+
+        sprite.position.x = this.position.x;
+        sprite.position.y = this.position.y;
+        sprite.position.z = this.position.z;
     }
 
     get position() {
