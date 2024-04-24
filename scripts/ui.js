@@ -8,7 +8,7 @@ export function createUI(world, player){
 
     const playerFolder = gui.addFolder('Player');
 
-    //playerFolder.add(player.toggleCamera());
+    playerFolder.add(player, 'toggleCamera');
 
     gui.add(world.size, 'width', 8 , 128, 1).name("Width"); //object is world.size, the thing changing is width, the minimum is 8, maximum is 128, step one at a time,
     gui.add(world.size, 'height', 8 , 128, 1).name("Height");

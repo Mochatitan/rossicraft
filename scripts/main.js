@@ -12,7 +12,7 @@ import { music } from './music.js'
 // const sound = new Howl({
 //     src: ['public/audio/music/sweden.mp3']
 //   });
-music.sweden.play();
+music.ariaMath.play();
 
 const devmode = true;
 
@@ -30,12 +30,12 @@ renderer.setClearColor(0xADD8E6); //set sky color
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(-32, 16, -32);
-camera.lookAt(0, 0, 0);
+const orbitCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+orbitCamera.position.set(-32, 16, -32);
+orbitCamera.lookAt(0, 0, 0);
 
 // Camera Controls
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(orbitCamera, renderer.domElement);
 controls.target.set(16, 0, 16); //make camera look at centre of world
 
 // Scene Setup
@@ -77,7 +77,7 @@ function animate(){
     player.applyInputs(dt);
 
     if(player.playerCamera === false){
-        renderer.render(scene, camera);
+        renderer.render(scene, orbitCamera);
     } else if(player.playerCamera === true){
         renderer.render(scene, player.camera);
     }
@@ -91,8 +91,10 @@ function animate(){
 }
 
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    orbitCamera.aspect = window.innerWidth / window.innerHeight;
+    orbitCamera.updateProjectionMatrix();
+    player.camera.aspect = window.innerWidth / window.innerHeight;
+    player.camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
