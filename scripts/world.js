@@ -206,7 +206,7 @@ export class World extends THREE.Group {
                     const instanceId = mesh.count;
 
                     if (!this.isBlockObscured(x, y, z)) {
-                        matrix.setPosition(x + 0.5, y + 0.5, z + 0.5); // +0.5 because the center of the box is at the origin but the lower left corner is now lower left corner of first box.
+                        matrix.setPosition(x, y, z); // +0.5 because the center of the box is at the origin but the lower left corner is now lower left corner of first box.
                         mesh.setMatrixAt(instanceId, matrix);
                         //mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
                         this.setBlockInstanceId(x, y, z, instanceId);

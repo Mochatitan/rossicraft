@@ -5,6 +5,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { World } from './world';
 import { createUI } from './ui';
 import { Player } from './player';
+import { Physics } from './physics';
 
 import {Howl, Howler} from 'howler';
 import { music } from './music.js'
@@ -46,6 +47,8 @@ scene.add(world);
 
 const player = new Player(scene);
 
+const physics = new Physics(scene);
+
 // Lights Setup
 function setupLights() {
     const light1 = new THREE.DirectionalLight();
@@ -75,6 +78,8 @@ function animate(){
 
     requestAnimationFrame(animate);
     player.applyInputs(dt);
+    player.updateBoundsHelper();
+    physics.update(dt, player, world);
 
     if(player.playerCamera === false){
         renderer.render(scene, orbitCamera);

@@ -1,12 +1,16 @@
 import * as THREE from 'three';
 import { PointerLockControls } from './PointerLockControls.js';
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
 const sprite = new THREE.Mesh( geometry, material ); 
 
 
 export class Player{
+
+
+    radius = 0.5;
+    height = 1.75;
 
 
     gamemode = "spectator";
@@ -48,6 +52,14 @@ export class Player{
 
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
+
+        // Wireframe mesh visualizing the player's bounding cylinder
+        this.boundsHelper = new THREE.Mesh(
+            new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
+            new THREE.MeshBasicMaterial({ wireframe: true})
+        );
+        scene.add(this.boundsHelper);
+
     }
 
     applyInputs(dt) {
@@ -74,6 +86,14 @@ export class Player{
         sprite.position.x = this.position.x;
         sprite.position.y = this.position.y;
         sprite.position.z = this.position.z;
+    }
+
+    /**
+     * Updates the position of the player's bounding cylinder helper
+     */
+    updateBoundsHelper() {
+        this.boundsHelper.position.copy(this.position);
+        this.boundsHelper.position.y -= this.height / 2;
     }
 
     get position() {
