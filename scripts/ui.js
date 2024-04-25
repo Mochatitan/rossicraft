@@ -1,10 +1,13 @@
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { blocks, resources} from './blocks';
 
+import { music } from './music';
 
-export function createUI(world, player){
+export function  createUI(world, player){
 
     const gui = new GUI();
+
+    gui.add(music, 'volume', 0, 1).name("music volume");
 
     const playerFolder = gui.addFolder('Player');
 
@@ -48,5 +51,6 @@ export function createUI(world, player){
 
     gui.onChange(() => {
         world.generate();
+        music.sweden.volume(music.volume);
     });
 }

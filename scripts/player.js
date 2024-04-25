@@ -69,12 +69,20 @@ export class Player{
      */
     get worldVelocity() {
 
-        //36:40
         this.#worldVelocity.copy(this.velocity);
         this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
         return this.#worldVelocity;
     }
+    
+    /**
+     * Applies a change in velocity 'dv' that is specified in the world frame
+     * @param {THREE.Vector3} dv
+     */
+    applyWorldDeltaVelocity(dv) {
+        dv.applyEuler(new THREE.Euler(0, -this.camera.rotation.y, 0));
 
+        this.velocity.add(dv);
+    }
     applyInputs(dt) {
         if(this.controls.isLocked) {
             this.velocity.x = 0;
