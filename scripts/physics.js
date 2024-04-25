@@ -18,6 +18,10 @@ const contactGeometry = new THREE.SphereGeometry(0.05, 6, 6);
 export class Physics {
     gravity = 32;
 
+    simulationRate = 200;
+    timestep = 1 / this.simulationRate;
+    accumulator = 0;
+
     constructor(scene) {
 
         this.helpers = new THREE.Group();
@@ -34,14 +38,22 @@ export class Physics {
      */
 
     update(dt, player, world) {
-        this.helpers.clear();
+        this.accumulator += dt;
 
-        player.velocity.y -= this.gravity * dt;
+        while(this.accumulator >= this.timestep) {
 
-        player.applyInputs(dt);
-        player.updateBoundsHelper();
+        
+            this.helpers.clear();
 
-        this.detectCollisions(player, world);
+            player.velocity.y -= this.gravity * this.timestep;
+
+            player.applyInputs(this.timestep);
+            player.updateBoundsHelper();
+
+            this.detectCollisions(player, world);
+
+            this.accumulator -= this.timestep;
+        }
     }
 
     /**
@@ -50,7 +62,7 @@ export class Physics {
      * @param {World} world
      */
     detectCollisions(player, world) {
-
+        player.onGround = false;
         const candidates = this.broadPhase(player, world);
         const collisions = this.narrowPhase(candidates, player);
       

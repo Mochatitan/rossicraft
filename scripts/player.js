@@ -11,7 +11,8 @@ export class Player{
 
     radius = 0.5;
     height = 1.75;
-
+    jumpSpeed = 10;
+    onGround = false;
 
     gamemode = "spectator";
     //spectator, survival, creative
@@ -145,8 +146,11 @@ export class Player{
                 this.position.set(32, 64, 32);
                 this.velocity.set(0, 0, 0);
                 break;
-            case 'keySPACE':
-                this.keysPressed.SPACE = true;
+            case 'Space':
+                if(this.onGround) {
+                    this.velocity.y += this.jumpSpeed;
+                }
+                // this.keysPressed.SPACE = true;
         }
     }
 
