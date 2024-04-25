@@ -39,7 +39,7 @@ export class Physics {
     detectCollisions(player, world) {
 
         this.helpers.clear();
-        
+
         const candidates = this.broadPhase(player, world);
         const collisions = this.narrowPhase(candidates, player);
       
@@ -94,8 +94,34 @@ export class Physics {
 
 
   narrowPhase(candidates, player){
-    return true;
+    const collisions = [];
+
+    for (const block of candidates) {
+
+        // 1. Get point on block closest to the player
+        const p = player.position;
+        const closestPoint = {
+            x: Math.max(block.x - 0.5, Math.min(p.x, block.x + 0.5)),
+            y: Math.max(block.y - 0.5, Math.min(p.y - (player.height /2), block.y + 0.5)),
+            z: Math.max(block.z - 0.5, Math.min(p.z, block.z + 0.5)),
+        };
+
+        // 2. Determine if point is inside player's bounding cylinder
+        const dx = closestPoint.x - player.position.x;
+        const dy = closestPoint.y - (player.position.y - (player.height / 2));
+        const dz = closestPoint.z - player.position.y;
+
+        // 3. If true, commpute the following
+        //      - Contact Point
+        //      - Overlap
+        //      - Collision Normal
+    }
+
+    return collisions;
   }
+
+
+
   resolveCollisions(collisions, player){
 
 
@@ -113,5 +139,21 @@ export class Physics {
     this.helpers.add(blockMesh);
   }
 
+
+  /**
+   * Returns true if the point 'p' is inside the player's bounding cylinder
+   * @param {{ x: number, y: number, z: number }} p 
+   * @param {Player} player 
+   * @returns {boolean}
+   */
+  pointInPlayerBoundingCylinder(p, player) {
+    const dx = p.x - player.position.x;
+    const dy = p.y - (player.position.y - (player.height / 2));
+    const dz = p.z - player.position.z;
+    const r_sq = dx * dx + dz * dz;
+  
+    // Check if contact point is inside the player's bounding cylinder
+    return (Math.abs(dy) < player.height / 2) && (r_sq < player.radius * player.radius);
+  }
 
 }
