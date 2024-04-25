@@ -77,8 +77,6 @@ function animate(){
     let dt = (currentTime - previousTime) /1000; //time since last frame in seconds
 
     requestAnimationFrame(animate);
-    player.applyInputs(dt);
-    player.updateBoundsHelper();
     physics.update(dt, player, world);
 
     if(player.playerCamera === false){

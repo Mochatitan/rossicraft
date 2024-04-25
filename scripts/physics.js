@@ -11,7 +11,13 @@ const collisionMaterial = new THREE.MeshBasicMaterial({
 
 const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
 
+
+const contactMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 });
+const contactGeometry = new THREE.SphereGeometry(0.05, 6, 6);
+
 export class Physics {
+    gravity = 32;
+
     constructor(scene) {
 
         this.helpers = new THREE.Group();
@@ -28,6 +34,13 @@ export class Physics {
      */
 
     update(dt, player, world) {
+        this.helpers.clear();
+
+        player.velocity.y -= this.gravity * dt;
+
+        player.applyInputs(dt);
+        player.updateBoundsHelper();
+
         this.detectCollisions(player, world);
     }
 
@@ -37,8 +50,6 @@ export class Physics {
      * @param {World} world
      */
     detectCollisions(player, world) {
-
-        this.helpers.clear();
 
         const candidates = this.broadPhase(player, world);
         const collisions = this.narrowPhase(candidates, player);
@@ -87,7 +98,7 @@ export class Physics {
         }
     }
 
-    console.log(`Boardphase Candidates: ${candidates.length}`);
+    //console.log(`Boardphase Candidates: ${candidates.length}`);
 
     return candidates;
   }
@@ -109,7 +120,7 @@ export class Physics {
         // 2. Determine if point is inside player's bounding cylinder
         const dx = closestPoint.x - player.position.x;
         const dy = closestPoint.y - (player.position.y - (player.height / 2));
-        const dz = closestPoint.z - player.position.y;
+        const dz = closestPoint.z - player.position.z;
 
         if (this.pointInPlayerBoundingCylinder(closestPoint, player)) {
             // Compute the overlap between the point and the player's bounding
@@ -141,6 +152,8 @@ export class Physics {
 
     }
 
+    //console.log(`Narrowphase Collisions: ${collisions.length}`);
+
     return collisions;
   }
 
@@ -148,7 +161,33 @@ export class Physics {
 
   resolveCollisions(collisions, player){
 
+    // Resolve the collisions in order of the smallest overlap to the largest
+    collisions.sort((a, b) => {
+        return a.overlap < b.overlap;
+      });
+  
+      for (const collision of collisions) {
+        // We need to re-check if the contact point is inside the player bounding
+        // cylinder for each collision since the player position is updated after
+        // each collision is resolved
+        if (!this.pointInPlayerBoundingCylinder(collision.contactPoint, player)) continue;
+  
+        // Adjust position of player so the block and player are no longer overlapping
+        let deltaPosition = collision.normal.clone();
+        deltaPosition.multiplyScalar(collision.overlap);
+        player.position.add(deltaPosition);
+        // console.log(`X: ${deltaPosition.x}`);
+        // console.log(`Z: ${deltaPosition.z}`);
 
+  
+        // // Get the magnitude of the player's velocity along the collision normal
+        let magnitude = player.worldVelocity.dot(collision.normal);
+        // // Remove that part of the velocity from the player's velocity
+        let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude);
+  
+        // // Apply the velocity to the player
+        player.applyWorldDeltaVelocity(velocityAdjustment.negate());
+      }
   }
 
 
@@ -162,6 +201,16 @@ export class Physics {
     blockMesh.position.copy(block);
     this.helpers.add(blockMesh);
   }
+
+    /**
+   * Visualizes the contact at the point 'p'
+   * @param {{ x, y, z }} p 
+   */
+    addContactPointerHelper(p) {
+        const contactMesh = new THREE.Mesh(contactGeometry, contactMaterial);
+        contactMesh.position.copy(p);
+        this.helpers.add(contactMesh);
+      }
 
 
   /**

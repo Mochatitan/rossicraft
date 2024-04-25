@@ -26,6 +26,7 @@ export class Player{
 
     input = new THREE.Vector3();
     velocity = new THREE.Vector3();
+    #worldVelocity = new THREE.Vector3();
 
     keysPressed = {
         W: false,
@@ -62,6 +63,18 @@ export class Player{
 
     }
 
+    /**
+     * Returns the velocity of the player in world coordinates
+     * @returns {THREE.Vector3}
+     */
+    get worldVelocity() {
+
+        //36:40
+        this.#worldVelocity.copy(this.velocity);
+        this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
+        return this.#worldVelocity;
+    }
+
     applyInputs(dt) {
         if(this.controls.isLocked) {
             this.velocity.x = 0;
@@ -79,6 +92,8 @@ export class Player{
             
             this.controls.moveRight(this.velocity.x * dt);
             this.controls.moveForward(this.velocity.z * dt);
+
+            this.position.y += this.velocity.y *dt;
 
             document.getElementById("player-position").innerHTML = this.toString();
         }
