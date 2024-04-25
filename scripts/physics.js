@@ -111,10 +111,34 @@ export class Physics {
         const dy = closestPoint.y - (player.position.y - (player.height / 2));
         const dz = closestPoint.z - player.position.y;
 
-        // 3. If true, commpute the following
-        //      - Contact Point
-        //      - Overlap
-        //      - Collision Normal
+        if (this.pointInPlayerBoundingCylinder(closestPoint, player)) {
+            // Compute the overlap between the point and the player's bounding
+            // cylinder along the y-axis and in the xz-plane
+            const overlapY = (player.height / 2) - Math.abs(dy);
+            const overlapXZ = player.radius - Math.sqrt(dx * dx + dz * dz);
+
+            // Compute the normal of the collision (pointing away from the contact point)
+            // and the overlap between the point and the player's bounding cylinder
+            let normal, overlap;
+            if (overlapY < overlapXZ) {
+            normal = new THREE.Vector3(0, -Math.sign(dy), 0);
+            overlap = overlapY;
+            player.onGround = true;
+            } else {
+            normal = new THREE.Vector3(-dx, 0, -dz).normalize();
+            overlap = overlapXZ;
+            }
+
+            collisions.push({
+                block,
+                contactPoint: closestPoint,
+                normal,
+                overlap
+            });
+
+            this.addContactPointerHelper(closestPoint);
+        }
+
     }
 
     return collisions;
