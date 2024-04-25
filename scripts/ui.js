@@ -3,23 +3,31 @@ import { blocks, resources} from './blocks';
 
 import { music } from './music';
 
-export function  createUI(world, player){
+export function  createUI(world, player, physics){
 
     const gui = new GUI();
 
+    gui.close();
+
+    const devtoolsFolder = gui.addFolder("Dev Tools");
+        devtoolsFolder.add(player.boundsHelper, 'visible').name("BoundsHelper");
+        devtoolsFolder.add(player.cameraHelper, 'visible').name("CameraHelper");
+        devtoolsFolder.add(physics.helpers, 'visible').name("Collision Indicators");
     gui.add(music, 'volume', 0, 1).name("music volume");
 
-    const playerFolder = gui.addFolder('Player');
 
-    playerFolder.add(player, 'toggleCamera');
-    playerFolder.add(player.cameraHelper, 'visible').name("Show Camera Helper");
-    gui.add(world.size, 'width', 8 , 128, 1).name("Width"); //object is world.size, the thing changing is width, the minimum is 8, maximum is 128, step one at a time,
-    gui.add(world.size, 'height', 8 , 128, 1).name("Height");
+    const playerFolder = gui.addFolder('Player');
+        playerFolder.add(player, 'toggleCamera');
+
+    
     
     const terrainFolder = gui.addFolder('Terrain');
 
     terrainFolder.add(world.params, 'seed', 0, 1000).name("World Seed");
     
+    terrainFolder.add(world.size, 'width', 8 , 128, 1).name("Width"); //object is world.size, the thing changing is width, the minimum is 8, maximum is 128, step one at a time,
+    terrainFolder.add(world.size, 'height', 8 , 128, 1).name("Height");
+
     terrainFolder.add(world.params.terrain, 'scale', 8, 64, 1).name("Scale");
     terrainFolder.add(world.params.terrain, 'magnitude', 0, 1, 0.02).name("Magnitude");
     terrainFolder.add(world.params.terrain, 'offset', 0, 1, 0.02).name("Offset");

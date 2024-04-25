@@ -8,6 +8,7 @@ const sprite = new THREE.Mesh( geometry, material );
 
 export class Player{
 
+    devMode = false;
 
     radius = 0.5;
     height = 1.75;
@@ -52,6 +53,8 @@ export class Player{
         scene.add(this.cameraHelper);
         scene.add(sprite);
 
+        this.cameraHelper.visible = false;
+
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
 
@@ -62,6 +65,8 @@ export class Player{
         );
         scene.add(this.boundsHelper);
 
+        this.boundsHelper.visible = false;
+        //this.removeBoundsHelper();
     }
 
     /**
@@ -189,5 +194,11 @@ export class Player{
     str += `Y: ${this.position.y.toFixed(3)} `;
     str += `Z: ${this.position.z.toFixed(3)}`;
     return str;
+  }
+
+  toggleDevMode(){
+
+    this.devMode = !this.devMode;
+
   }
 }

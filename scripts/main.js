@@ -102,5 +102,5 @@ window.addEventListener('resize', () => {
 });
 
 setupLights();
-if(devmode){ createUI(world, player);}
+if(devmode){ createUI(world, player, physics);}
 animate();
