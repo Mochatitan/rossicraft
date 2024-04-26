@@ -8,17 +8,23 @@ import { Player } from './player';
 import { Physics } from './physics';
 
 import {Howl, Howler} from 'howler';
-import { music } from './music.js'
+//import { music } from './music.js'
+import { Music } from './music.js';
 
 // const sound = new Howl({
 //     src: ['public/audio/music/sweden.mp3']
 //   });
-music.sweden.play();
+//music.sweden.play();
+
+
 
 const devmode = true;
 
 const stats = new Stats(); //stats for fps and stuff
+const music = new Music();
 
+music.loadSongs();
+music.startLoop();
 
 //Render setup
 const renderer = new THREE.WebGLRenderer();
@@ -102,5 +108,5 @@ window.addEventListener('resize', () => {
 });
 
 setupLights();
-if(devmode){ createUI(world, player, physics);}
+if(devmode){ createUI(world, player, physics, music);}
 animate();

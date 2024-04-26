@@ -1,9 +1,9 @@
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { blocks, resources} from './blocks';
 
-import { music } from './music';
+//import { Music } from './music';
 
-export function  createUI(world, player, physics){
+export function  createUI(world, player, physics, music){
 
     const gui = new GUI();
 
@@ -13,8 +13,10 @@ export function  createUI(world, player, physics){
         devtoolsFolder.add(player.boundsHelper, 'visible').name("BoundsHelper");
         devtoolsFolder.add(player.cameraHelper, 'visible').name("CameraHelper");
         devtoolsFolder.add(physics.helpers, 'visible').name("Collision Indicators");
-    gui.add(music, 'volume', 0, 1).name("music volume");
-
+    
+    const musicFolder = gui.addFolder("Music");
+        musicFolder.add(music, 'volume', 0, 1).name("music volume");
+        musicFolder.add(music, 'nextSong');
 
     const playerFolder = gui.addFolder('Player');
         playerFolder.add(player, 'toggleCamera');
@@ -59,6 +61,6 @@ export function  createUI(world, player, physics){
 
     gui.onChange(() => {
         world.generate();
-        music.sweden.volume(music.volume);
+        music.checkVolume();
     });
 }
