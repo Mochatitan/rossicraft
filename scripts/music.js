@@ -15,8 +15,8 @@ export class Music {
         miceonvenus: new Howl({src: ['audio/music/miceonvenus.mp3']}),
     }
 
+    playlist = Object.values(this.songs);
     
-    playlist = [this.songs.sweden, this.songs.ariaMath, this.songs.cold, this.songs.danny, this.songs.miceonvenus];
 
     loadSongs(){
         this.songs.sweden.load();
