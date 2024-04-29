@@ -33,11 +33,11 @@ export class Physics {
     /**
      * Updates every tick
      * @param {number} dt
-     * @param {Player} player
+     * @param {Entity} entity
      * @param {World} world
      */
 
-    update(dt, player, world) {
+    update(dt, entity, world) {
         this.accumulator += dt;
 
         while(this.accumulator >= this.timestep) {
@@ -45,12 +45,12 @@ export class Physics {
         
             this.helpers.clear();
 
-            player.velocity.y -= this.gravity * this.timestep;
+            entity.velocity.y -= this.gravity * this.timestep;
 
-            player.applyInputs(this.timestep);
-            player.updateBoundsHelper();
+            entity.applyInputs(this.timestep);
+            entity.updateBoundsHelper();
 
-            this.detectCollisions(player, world);
+            this.detectCollisions(entity, world);
 
             this.accumulator -= this.timestep;
         }
@@ -58,16 +58,16 @@ export class Physics {
 
     /**
      * Main function for collision detection
-     * @param {Player} player
+     * @param {Entity} entity
      * @param {World} world
      */
-    detectCollisions(player, world) {
-        player.onGround = false;
-        const candidates = this.broadPhase(player, world);
-        const collisions = this.narrowPhase(candidates, player);
+    detectCollisions(entity, world) {
+        entity.onGround = false;
+        const candidates = this.broadPhase(entity, world);
+        const collisions = this.narrowPhase(candidates, entity);
       
         if (collisions.length > 0) {
-          this.resolveCollisions(collisions, player);
+          this.resolveCollisions(collisions, entity);
         }
     }
 
@@ -76,22 +76,22 @@ export class Physics {
    * possible blocks the player may be colliding with
    * @returns {{ id: number, instanceId: number }[]}
    */
-  broadPhase(player, world) {
+  broadPhase(entity ,world) {
     const candidates = [];
 
     const extents = {
 
         x: {
-            min: Math.floor(player.position.x - player.radius),
-            max: Math.ceil(player.position.x + player.radius),
+            min: Math.floor(entity.position.x - entity.radius),
+            max: Math.ceil(entity.position.x + entity.radius),
         },
         y: {
-            min: Math.floor(player.position.y - player.height),
-            max: Math.ceil(player.position.y),
+            min: Math.floor(entity.position.y - entity.height),
+            max: Math.ceil(entity.position.y),
         },
         z: {
-            min: Math.floor(player.position.z - player.radius),
-            max: Math.ceil(player.position.z + player.radius),
+            min: Math.floor(entity.position.z - entity.radius),
+            max: Math.ceil(entity.position.z + entity.radius),
         },
     };
 
@@ -116,40 +116,40 @@ export class Physics {
   }
 
 
-  narrowPhase(candidates, player){
+  narrowPhase(candidates, entity){
     const collisions = [];
 
     for (const block of candidates) {
 
         // 1. Get point on block closest to the player
-        const p = player.position;
+        const p = entity.position;
         const closestPoint = {
             x: Math.max(block.x - 0.5, Math.min(p.x, block.x + 0.5)),
-            y: Math.max(block.y - 0.5, Math.min(p.y - (player.height /2), block.y + 0.5)),
+            y: Math.max(block.y - 0.5, Math.min(p.y - (entity.height /2), block.y + 0.5)),
             z: Math.max(block.z - 0.5, Math.min(p.z, block.z + 0.5)),
         };
 
         // 2. Determine if point is inside player's bounding cylinder
-        const dx = closestPoint.x - player.position.x;
-        const dy = closestPoint.y - (player.position.y - (player.height / 2));
-        const dz = closestPoint.z - player.position.z;
+        const dx = closestPoint.x - entity.position.x;
+        const dy = closestPoint.y - (entity.position.y - (entity.height / 2));
+        const dz = closestPoint.z - entity.position.z;
 
-        if (this.pointInPlayerBoundingCylinder(closestPoint, player)) {
+        if (this.pointInPlayerBoundingCylinder(closestPoint, entity)) {
             // Compute the overlap between the point and the player's bounding
             // cylinder along the y-axis and in the xz-plane
-            const overlapY = (player.height / 2) - Math.abs(dy);
-            const overlapXZ = player.radius - Math.sqrt(dx * dx + dz * dz);
+            const overlapY = (entity.height / 2) - Math.abs(dy);
+            const overlapXZ = entity.radius - Math.sqrt(dx * dx + dz * dz);
 
             // Compute the normal of the collision (pointing away from the contact point)
             // and the overlap between the point and the player's bounding cylinder
             let normal, overlap;
             if (overlapY < overlapXZ) {
-            normal = new THREE.Vector3(0, -Math.sign(dy), 0);
-            overlap = overlapY;
-            player.onGround = true;
+                normal = new THREE.Vector3(0, -Math.sign(dy), 0);
+                overlap = overlapY;
+                entity.onGround = true;
             } else {
-            normal = new THREE.Vector3(-dx, 0, -dz).normalize();
-            overlap = overlapXZ;
+                normal = new THREE.Vector3(-dx, 0, -dz).normalize();
+                overlap = overlapXZ;
             }
 
             collisions.push({
@@ -171,7 +171,7 @@ export class Physics {
 
 
 
-  resolveCollisions(collisions, player){
+  resolveCollisions(collisions, entity){
 
     // Resolve the collisions in order of the smallest overlap to the largest
     collisions.sort((a, b) => {
@@ -182,23 +182,23 @@ export class Physics {
         // We need to re-check if the contact point is inside the player bounding
         // cylinder for each collision since the player position is updated after
         // each collision is resolved
-        if (!this.pointInPlayerBoundingCylinder(collision.contactPoint, player)) continue;
+        if (!this.pointInPlayerBoundingCylinder(collision.contactPoint, entity)) continue;
   
         // Adjust position of player so the block and player are no longer overlapping
         let deltaPosition = collision.normal.clone();
         deltaPosition.multiplyScalar(collision.overlap);
-        player.position.add(deltaPosition);
+        entity.position.add(deltaPosition);
         // console.log(`X: ${deltaPosition.x}`);
         // console.log(`Z: ${deltaPosition.z}`);
 
   
         // // Get the magnitude of the player's velocity along the collision normal
-        let magnitude = player.worldVelocity.dot(collision.normal);
+        let magnitude = entity.worldVelocity.dot(collision.normal);
         // // Remove that part of the velocity from the player's velocity
         let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude);
   
         // // Apply the velocity to the player
-        player.applyWorldDeltaVelocity(velocityAdjustment.negate());
+        entity.applyWorldDeltaVelocity(velocityAdjustment.negate());
       }
   }
 

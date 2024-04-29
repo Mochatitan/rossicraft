@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { PointerLockControls } from './PointerLockControls.js';
+import { Entity } from './entity.js';
 
 const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
 const sprite = new THREE.Mesh( geometry, material ); 
 
 
-export class Player{
+export class Player extends Entity{
 
     devMode = false;
 
@@ -48,7 +49,11 @@ export class Player{
 
 
     constructor(scene) {
+        super(scene);
+
         this.position.set(32, 64, 32);
+        this.camera.position.set(32, 64, 32);
+
         scene.add(this.camera);
         scene.add(this.cameraHelper);
         scene.add(sprite);
@@ -112,22 +117,26 @@ export class Player{
             document.getElementById("player-position").innerHTML = this.toString();
         }
 
+       
+
         sprite.position.x = this.position.x;
         sprite.position.y = this.position.y;
         sprite.position.z = this.position.z;
+
+        this.position = this.camera.position;
     }
 
     /**
      * Updates the position of the player's bounding cylinder helper
      */
     updateBoundsHelper() {
-        this.boundsHelper.position.copy(this.position);
+        this.boundsHelper.position.copy(this.camera.position);
         this.boundsHelper.position.y -= this.height / 2;
     }
 
-    get position() {
-        return this.camera.position;
-    }
+    // get position() {
+    //     return this.camera.position;
+    // }
 
     onKeyDown(event){
         if (!this.controls.isLocked){
@@ -148,7 +157,7 @@ export class Player{
                 this.keysPressed.D = true;
                 break;
             case 'keyR':
-                this.position.set(32, 64, 32);
+                this.camera.position.set(32, 64, 32);
                 this.velocity.set(0, 0, 0);
                 break;
             case 'Space':
@@ -190,9 +199,9 @@ export class Player{
    */
   toString() {
     let str = '';
-    str += `X: ${this.position.x.toFixed(3)} `;
-    str += `Y: ${this.position.y.toFixed(3)} `;
-    str += `Z: ${this.position.z.toFixed(3)}`;
+    str += `X: ${this.camera.position.x.toFixed(3)} `;
+    str += `Y: ${this.camera.position.y.toFixed(3)} `;
+    str += `Z: ${this.camera.position.z.toFixed(3)}`;
     return str;
   }
 
