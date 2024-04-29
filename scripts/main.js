@@ -90,6 +90,9 @@ function animate(){
     physics.update(dt, player, world);
     physics.update(dt, pig, world);
     
+    if(percentChance(0.015) === true){
+        pig.lookAtVector(player.position);
+    }
     if(player.playerCamera === false){
         renderer.render(scene, orbitCamera);
     } else if(player.playerCamera === true){
@@ -112,6 +115,14 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+function percentChance(chance){
+    let random = Math.random();
+    if(random < chance){
+        return true;
+    } else {
+        return false;
+    }
+}
 setupLights();
 if(devmode){ createUI(world, player, physics, music);}
 animate();

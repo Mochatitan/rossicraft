@@ -3,16 +3,38 @@ import { Entity } from './entity';
 
 export class Pig extends Entity{
 
-    bodyShape = new THREE.BoxGeometry(0.8, 0.5, 0.5);
-    bodyMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
+    textureLoader = new THREE.TextureLoader();
+
+    textures = {
+        pigHead: this.loadTexture("textures/pigFace.png"),
+        pigBody: this.loadTexture("textures/pinkTexture.jpg"),
+    };
+
+    headMaterial = [
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // right
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // left
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // top
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // bottom
+        new THREE.MeshLambertMaterial({ map: this.textures.pigHead }), // front
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody })  // back
+      ];
+      bodyMaterial = [
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // right
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // left
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // top
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // bottom
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // front
+        new THREE.MeshLambertMaterial({ map: this.textures.pigBody })  // back
+      ];
+
+    bodyShape = new THREE.BoxGeometry(0.5, 0.5, 0.8);
     bodySprite = new THREE.Mesh( this.bodyShape, this.bodyMaterial ); 
 
-    headShape = new THREE.BoxGeometry(0.2,0.2,0.2);
-    headMaterial = new THREE.MeshBasicMaterial( {color: 0x0078d4});
+    headShape = new THREE.BoxGeometry(0.45,0.45,0.45);
     headSprite = new THREE.Mesh( this.headShape, this.headMaterial);
 
     radius = 0.5;
-    height = 0.5;
+    height = 0.8;
 
     jumpSpeed = 10;
     onGround = false;
@@ -30,11 +52,12 @@ export class Pig extends Entity{
 
     constructor(scene) {
         super(scene);
-        this.position.set(32, 66, 32);
+        this.position.set(32, 66, 25);
         this.rotation.set(3.5, 3.5, 3.5);
 
         this.goalBlock.set(32,64,40);
 
+        
         scene.add(this.bodySprite);
         scene.add(this.headSprite);
 
@@ -88,20 +111,24 @@ export class Pig extends Entity{
 
             this.position.y += this.velocity.y *dt;
 
-        this.bodySprite.position.copy(this.position);
+        this.bodySprite.position.x = this.position.x;
+        this.bodySprite.position.y = this.position.y - (0.75 * this.height) + 0.25;
+        this.bodySprite.position.z = this.position.z;
 
         this.headSprite.position.x = this.position.x;
-        this.headSprite.position.y = this.position.y+1;
-        this.headSprite.position.z = this.position.z;
+        this.headSprite.position.y = this.position.y;
+        this.headSprite.position.z = this.position.z + 0.6;
 
         //this.rotation.x += 1;
 
         //this.bodySprite.rotation.copy(this.rotation);
-        this.bodySprite.rotateY(0.05 * dt);
+        //this.bodySprite.rotateY(0.05 * dt);
 
-        this.position.angleTo(this.rotation);
+        //this.position.angleTo(this.rotation);
 
-        this.bodySprite.lookAt(this.goalBlock);
+        //this.bodySprite.lookAt(this.goalBlock);
+
+        //this.headSprite.lookAt(this.goalBlock);
     }
 
     /**
@@ -110,6 +137,10 @@ export class Pig extends Entity{
     updateBoundsHelper() {
         this.boundsHelper.position.copy(this.position);
         this.boundsHelper.position.y -= this.height / 2;
+    }
+
+    lookAtVector(vector){
+        this.headSprite.lookAt(vector);
     }
 
   /**

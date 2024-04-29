@@ -102,4 +102,14 @@ export class Entity{
     str += `Z: ${this.position.z.toFixed(3)}`;
     return str;
   }
+
+
+    loadTexture(path){
+        const texture = this.textureLoader.load(path);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return texture;
+
+    }
+
+
 }
