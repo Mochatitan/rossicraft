@@ -10,7 +10,7 @@ export function  createUI(world, player, physics, music){
     gui.close();
 
     const devtoolsFolder = gui.addFolder("Dev Tools");
-        devtoolsFolder.add(player.boundsHelper, 'visible').name("BoundsHelper");
+        //devtoolsFolder.add(player.boundsHelper, 'visible').name("BoundsHelper");
         devtoolsFolder.add(player.cameraHelper, 'visible').name("CameraHelper");
         devtoolsFolder.add(physics.helpers, 'visible').name("Collision Indicators");
     

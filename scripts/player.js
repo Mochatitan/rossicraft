@@ -71,7 +71,6 @@ export class Player extends Entity{
         scene.add(this.boundsHelper);
 
         this.boundsHelper.visible = false;
-        //this.removeBoundsHelper();
     }
 
     /**

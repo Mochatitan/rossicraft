@@ -11,8 +11,8 @@ export class Entity{
     headMaterial = new THREE.MeshBasicMaterial( {color: 0x0078d4});
     headSprite = new THREE.Mesh( this.headShape, this.headMaterial);
 
-    radius = 0.5;
-    height = 1.75;
+    // radius = 0.5;
+    // height = 1.75;
 
     jumpSpeed = 10;
     onGround = false;
@@ -27,17 +27,9 @@ export class Entity{
     #worldVelocity = new THREE.Vector3();
 
     constructor(scene) {
-        this.position.set(32, 64, 32);
-        scene.add(this.bodySprite);
-        scene.add(this.headSprite);
-
-        // Wireframe mesh visualizing the player's bounding cylinder
-        this.boundsHelper = new THREE.Mesh(
-            new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
-            new THREE.MeshBasicMaterial({ wireframe: true})
-        );
-        scene.add(this.boundsHelper);
-
+        //this.position.set(32, 64, 32);
+        // scene.add(this.bodySprite);
+        // scene.add(this.headSprite);
     }
 
     /**
