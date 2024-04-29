@@ -11,6 +11,8 @@ import {Howl, Howler} from 'howler';
 //import { music } from './music.js'
 import { Music } from './music.js';
 
+import { Pig } from './pig.js';
+
 // const sound = new Howl({
 //     src: ['public/audio/music/sweden.mp3']
 //   });
@@ -53,6 +55,8 @@ scene.add(world);
 
 const player = new Player(scene);
 
+const pig = new Pig(scene);
+
 const physics = new Physics(scene);
 
 // Lights Setup
@@ -84,7 +88,8 @@ function animate(){
 
     requestAnimationFrame(animate);
     physics.update(dt, player, world);
-
+    physics.update(dt, pig, world);
+    
     if(player.playerCamera === false){
         renderer.render(scene, orbitCamera);
     } else if(player.playerCamera === true){
