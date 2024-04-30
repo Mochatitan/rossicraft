@@ -93,6 +93,15 @@ function animate(){
     if(percentChance(0.015) === true){
         //pig.lookAtVector(player.position);
     }
+
+    if(pig.inGoalBlock()){
+            //console.log('in goal block');
+        if(percentChance(0.01) === true){
+            console.log("randomizing");
+            pig.randomizeGoalBlock(world);
+        }
+    }
+
     if(player.playerCamera === false){
         renderer.render(scene, orbitCamera);
     } else if(player.playerCamera === true){

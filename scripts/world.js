@@ -305,4 +305,16 @@ export class World extends THREE.Group {
             return false;
         }
     }
+
+    getTopBlockY(x, z){
+        console.log("getting top block");
+        for(let y = this.size.height/2; y < this.size.height; y++){
+            if(this.isBlockObscured(x, y, z)){
+                console.log(this.isBlockObscured(x, y, z));
+            } else {
+                console.log(y);
+                return y;
+            }
+        }
+    }
 }

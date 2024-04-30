@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Entity } from './entity';
+import { update } from 'three/examples/jsm/libs/tween.module.js';
 
 const collisionMaterial = new THREE.MeshBasicMaterial({
     color: 0xff0000,
@@ -44,13 +45,17 @@ export class Pig extends Entity{
     headShape = new THREE.BoxGeometry(0.45,0.45,0.45);
     headSprite = new THREE.Mesh( this.headShape, this.headMaterial);
 
+    blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);
+
     radius = 0.5;
     height = 0.8;
 
     jumpSpeed = 10;
     onGround = false;
 
-    maxSpeed = 1;
+    goalBlockRange = 5;
+
+    maxSpeed = 3;
     flySpeed = 3;
 
     position = new THREE.Vector3();
@@ -63,6 +68,10 @@ export class Pig extends Entity{
 
     constructor(scene) {
         super(scene);
+
+        this.helpers = new THREE.Group();
+        scene.add(this.helpers);
+
         this.position.set(32, 66, 25);
         this.rotation.set(3.5, 3.5, 3.5);
 
@@ -73,6 +82,10 @@ export class Pig extends Entity{
             new THREE.MeshBasicMaterial({ wireframe: true})
         );
 
+
+        this.blockMesh.position.copy(this.goalBlock);
+        scene.add(this.blockMesh);
+
         this.pigGroup.position.set(32,66,25);
         this.pigGroup.add(this.bodySprite);
         this.pigGroup.add(this.headSprite);
@@ -82,7 +95,6 @@ export class Pig extends Entity{
 
         scene.add(this.boundsHelper);
 
-        this.addGoalHelper(scene);
         // Wireframe mesh visualizing the player's bounding cylinder
         
         this.headSprite.position.y = 1;
@@ -101,6 +113,16 @@ export class Pig extends Entity{
         return this.#worldVelocity;
     }
     
+      /**
+     * Visualizes the block the player is colliding with
+     * @param {THREE.Vector3} block
+     */
+    addCollisionHelper() {
+        const blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);
+        this.updateBlockMesh();
+        this.helpers.add(blockMesh);
+    }
+
     /**
      * Applies a change in velocity 'dv' that is specified in the world frame
      * @param {THREE.Vector3} dv
@@ -113,7 +135,7 @@ export class Pig extends Entity{
 
     applyInputs(dt) {
             this.velocity.x = 0;
-            //this.velocity.z = 0.3;
+            this.velocity.z = 0;
 
             // if(this.keysPressed.W){this.velocity.z += this.maxSpeed;}
             // if(this.keysPressed.A){this.velocity.x -= this.maxSpeed;}
@@ -139,25 +161,48 @@ export class Pig extends Entity{
             // this.headSprite.position.y = this.position.y;
             // this.headSprite.position.z = this.position.z + 0.6;
 
-            const dx = ((this.goalBlock.x - this.position.x));
-            const dz = ((this.goalBlock.z - this.position.z));
-            const d = Math.sqrt((dx*dx) + (dz*dz));
+            if(!this.inGoalBlock()){
+                const dx = ((this.goalBlock.x - this.position.x));
+                const dz = ((this.goalBlock.z - this.position.z));
+                const d = Math.sqrt((dx*dx) + (dz*dz));
 
-            const xvel = dx/d;
-            const zvel = dz/d;
+                const xvel = dx/d;
+                const zvel = dz/d;
 
-            this.position.x += xvel * dt * this.maxSpeed;
-            this.position.z += zvel * dt * this.maxSpeed;
+                this.position.x += xvel * dt * this.maxSpeed;
+                this.position.z += zvel * dt * this.maxSpeed;
 
-            this.pigGroup.position.x = this.position.x;
-            this.pigGroup.position.y = this.position.y;
-            this.pigGroup.position.z = this.position.z;
+                this.pigGroup.position.x = this.position.x;
+                this.pigGroup.position.y = this.position.y;
+                this.pigGroup.position.z = this.position.z;
 
-            this.headSprite.lookAt(this.goalBlock);
+                
+            }
+                //this.headSprite.lookAt(this.goalBlock);
+                //this.bodySprite.lookAt(new THREE.Vector3(this.goalBlock.x, this.position.y, this.goalBlock.z));
             //this.bodySprite.lookAt(this.goalBlock);
+            // if(this.inGoalBlock()){
+            //     //console.log("In Goal Block");
+            // }
 
+            //.log(this.position.x);
     }
 
+    inGoalBlock(){
+        if((this.position.x >= this.goalBlock.x - 0.5) && (this.position.x <= this.goalBlock.x + 0.5)){
+            if((this.position.z >= this.goalBlock.z - 0.5) && (this.position.z <= this.goalBlock.z + 0.5)){
+                //console.log("in goal block method");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    updateBlockMesh(){
+        this.blockMesh.position.x = this.goalBlock.x;
+        this.blockMesh.position.y = this.goalBlock.y;
+        this.blockMesh.position.z = this.goalBlock.z;
+    }
     /**
      * Updates the position of the player's bounding cylinder helper
      */
@@ -166,9 +211,9 @@ export class Pig extends Entity{
         this.boundsHelper.position.y -= this.height / 2;
     }
 
-    lookAtVector(vector){
-        this.headSprite.lookAt(vector);
-    }
+    // lookAtVector(vector){
+    //     this.headSprite.lookAt(vector);
+    // }
 
   /**
    * Returns entity position in a readable string form
@@ -185,12 +230,26 @@ export class Pig extends Entity{
    * Visualizes the block the player is colliding with
    * @param {THREE.Object3D} block 
    */
-    addGoalHelper(scene) {
-        const blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);
-        blockMesh.position.copy(this.goalBlock);
-        scene.add(blockMesh);
+
+
+      randomizeGoalBlock(world){
+        const xGoal = getRandomInt(this.position.x - this.goalBlockRange, this.position.x + this.goalBlockRange);
+        const zGoal = getRandomInt(this.position.z - this.goalBlockRange, this.position.z + this.goalBlockRange);
+
+        const yGoal = world.getTopBlockY(xGoal, zGoal);
+
+        this.goalBlock.x = xGoal;
+        this.goalBlock.y = yGoal;
+        this.goalBlock.z = zGoal;
+
+        this.addCollisionHelper(this.goalBlock);
+        //clone(world.getTopBlock(x, z).position);
+        //console.log("x: "+x); console.log("z: "+z);
+        this.updateBlockMesh();
       }
+
 }
+
 
 function percentChance(chance){
     let random = Math.random();
@@ -200,3 +259,8 @@ function percentChance(chance){
         return false;
     }
 }
+function getRandomInt(min, max) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+  }
