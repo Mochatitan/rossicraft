@@ -3,6 +3,8 @@ import * as THREE from 'three';
 
 export class Entity{
 
+    autoJump = true;
+    
     bodyShape = new THREE.BoxGeometry(0.5, 0.8, 0.5);
     bodyMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
     bodySprite = new THREE.Mesh( this.bodyShape, this.bodyMaterial ); 

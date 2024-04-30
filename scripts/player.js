@@ -115,7 +115,7 @@ export class Player extends Entity{
 
             this.position.y += this.velocity.y *dt;
 
-            document.getElementById("player-position").innerHTML = this.toString();
+            // document.getElementById("player-position").innerHTML = this.toString();
         }
 
        

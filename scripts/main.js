@@ -90,13 +90,14 @@ function animate(){
     physics.update(dt, player, world);
     physics.update(dt, pig, world);
     
+    //console.log(dt);
     if(percentChance(0.015) === true){
         // pig.lookAtVector(player.position);
     }
 
     if(pig.inGoalBlock()){
             //console.log('in goal block');
-        if(percentChance(0.01) === true){
+        if(percentChance(0.9) === true){
             console.log("randomizing");
             pig.randomizeGoalBlock(world);
         }

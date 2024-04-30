@@ -197,6 +197,10 @@ export class Physics {
         // // Remove that part of the velocity from the player's velocity
         let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude);
   
+        if(!(deltaPosition.x === 0 || deltaPosition.z === 0) && entity.autoJump){
+            entity.jump();
+            console.log('0 delta');
+        }
         // // Apply the velocity to the player
         entity.applyWorldDeltaVelocity(velocityAdjustment.negate());
       }

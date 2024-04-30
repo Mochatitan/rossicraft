@@ -13,6 +13,8 @@ const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
 export class Pig extends Entity{
 
     
+    autoJump = true;
+    
     textureLoader = new THREE.TextureLoader();
 
     textures = {
@@ -58,6 +60,9 @@ export class Pig extends Entity{
     maxSpeed = 3;
     flySpeed = 3;
 
+    lastDX = 1;
+    lastDZ = 1;
+
     position = new THREE.Vector3();
     rotation = new THREE.Vector3();
     velocity = new THREE.Vector3();
@@ -100,6 +105,7 @@ export class Pig extends Entity{
         this.headSprite.position.y = 1;
         
 
+        
     }
 
     /**
@@ -149,7 +155,7 @@ export class Pig extends Entity{
             
             // this.controls.moveRight(this.velocity.x * dt);
             // this.controls.moveForward(this.velocity.z * dt);
-            this.position.z += (this.velocity.z * dt);
+            //this.position.z += (this.velocity.z * dt);
 
             this.position.y += this.velocity.y *dt;
 
@@ -172,8 +178,30 @@ export class Pig extends Entity{
                 this.position.x += xvel * dt * this.maxSpeed;
                 this.position.z += zvel * dt * this.maxSpeed;
 
+                let str = '';
+                str += `dX: ${dx.toFixed(3)} `;
+                str += `dZ: ${dz.toFixed(3)} `;
+                str += `DX: ${this.lastDX.toFixed(3)} `;
+                str += `DZ: ${this.lastDZ.toFixed(3)} `;
+                document.getElementById("player-position").innerHTML = str;
+                //str += `Z: ${this.position.z.toFixed(3)}`;
+                
                 
 
+                
+                if(percentChance(0.4 * dt)){
+                    console.log("logging d's");
+                    this.lastDX = dx;
+                    this.lastDZ = dz;
+                }
+                
+                if(inInterval(dx, this.lastDX, 0.05) || inInterval(dz, this.lastDZ, 0.05)){
+                    this.position.x - xvel/10;
+                    this.position.z - zvel/10;
+                    this.jump();
+                    console.log('on interval and trying to jump');
+                }
+                
                 
             }
                 this.headSprite.lookAt(this.goalBlock);
@@ -183,13 +211,17 @@ export class Pig extends Entity{
                 this.pigGroup.position.y = this.position.y;
                 this.pigGroup.position.z = this.position.z;
                 
-                this.jump();
+                //this.jump();
             //this.bodySprite.lookAt(this.goalBlock);
             // if(this.inGoalBlock()){
             //     //console.log("In Goal Block");
             // }
 
             //.log(this.position.x);
+
+
+            // document.getElementById("player-position").innerHTML = this.toString();
+            //this.jump();
     }
 
     inGoalBlock(){
@@ -267,4 +299,17 @@ function getRandomInt(min, max) {
     const minCeiled = Math.ceil(min);
     const maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+  }
+
+  /**
+   * check if a number is in a given interval
+   * @param {Number} num the number you are checking if its in the interval
+   * @param {Number} mean the middle of the interval
+   * @param {Number} sd how much away from the mean the num is still accepted as true
+   */
+  function inInterval(num, mean, sd){
+    if((num >= mean-sd) && (num <= mean+sd)){
+        return true;
+    }
+    return false;
   }
