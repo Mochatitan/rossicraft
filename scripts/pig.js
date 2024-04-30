@@ -23,7 +23,7 @@ export class Pig extends Entity{
         new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // left
         new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // top
         new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // bottom
-        new THREE.MeshLambertMaterial({ map: this.textures.pigBody }), // front
+        new THREE.MeshLambertMaterial({ map: this.textures.pigHead }), // front
         new THREE.MeshLambertMaterial({ map: this.textures.pigBody })  // back
       ];
 
@@ -119,16 +119,36 @@ export class Pig extends Entity{
         this.headSprite.position.y = this.position.y;
         this.headSprite.position.z = this.position.z + 0.6;
 
-        //this.rotation.x += 1;
+        // this.rotation.x += 1;
 
-        //this.bodySprite.rotation.copy(this.rotation);
-        //this.bodySprite.rotateY(0.05 * dt);
+        // this.bodySprite.rotation.copy(this.rotation);
+        // this.bodySprite.rotateY(0.05 * dt);
 
-        //this.position.angleTo(this.rotation);
+        // this.position.angleTo(this.rotation);
 
-        //this.bodySprite.lookAt(this.goalBlock);
+        // this.bodySprite.lookAt(this.goalBlock);
 
-        //this.headSprite.lookAt(this.goalBlock);
+        // this.headSprite.lookAt(this.goalBlock);
+
+
+        // const e = new THREE.Euler( 0, 3.14, 0, 'XYZ' );
+        // const q = new THREE.Quaternion().setFromEuler( e );
+        // const v = new THREE.Vector3( 0, 0, 1).applyQuaternion( q );
+
+        // const offset = 1; // world units
+        // this.position.add( v.multiplyScalar( offset * dt ) );
+
+        // //this.bodySprite.rotation.setFromQuaternion(q);
+        // //this.headSprite.rotation.setFromScalar(v.multiplyScalar(offset * dt));
+        // this.headSprite.lookAt(this.goalBlock);
+        // //this.bodySprite.setRotationFromEuler(e);
+        // this.bodySprite.setRotationFromEuler(e);
+        // //this.rotation.applyEuler(e);
+        // console.log( v.multiplyScalar(offset * dt));
+
+        const dx = this.goalBlock.x - this.position.x;
+        //this.position.x += (this.goalBlock.position.x - this.position.x);
+
     }
 
     /**
