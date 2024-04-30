@@ -112,4 +112,9 @@ export class Entity{
     }
 
 
+    jump(){
+        if(this.onGround) {
+            this.velocity.y += this.jumpSpeed;
+        }
+    }
 }

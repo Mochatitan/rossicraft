@@ -91,7 +91,7 @@ function animate(){
     physics.update(dt, pig, world);
     
     if(percentChance(0.015) === true){
-        //pig.lookAtVector(player.position);
+        // pig.lookAtVector(player.position);
     }
 
     if(pig.inGoalBlock()){

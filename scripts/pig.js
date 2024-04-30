@@ -172,14 +172,18 @@ export class Pig extends Entity{
                 this.position.x += xvel * dt * this.maxSpeed;
                 this.position.z += zvel * dt * this.maxSpeed;
 
-                this.pigGroup.position.x = this.position.x;
-                this.pigGroup.position.y = this.position.y;
-                this.pigGroup.position.z = this.position.z;
+                
 
                 
             }
-                //this.headSprite.lookAt(this.goalBlock);
-                //this.bodySprite.lookAt(new THREE.Vector3(this.goalBlock.x, this.position.y, this.goalBlock.z));
+                this.headSprite.lookAt(this.goalBlock);
+                this.bodySprite.lookAt(new THREE.Vector3(this.goalBlock.x, this.position.y, this.goalBlock.z));
+
+                this.pigGroup.position.x = this.position.x;
+                this.pigGroup.position.y = this.position.y;
+                this.pigGroup.position.z = this.position.z;
+                
+                this.jump();
             //this.bodySprite.lookAt(this.goalBlock);
             // if(this.inGoalBlock()){
             //     //console.log("In Goal Block");
@@ -211,9 +215,9 @@ export class Pig extends Entity{
         this.boundsHelper.position.y -= this.height / 2;
     }
 
-    // lookAtVector(vector){
-    //     this.headSprite.lookAt(vector);
-    // }
+    lookAtVector(vector){
+        this.headSprite.lookAt(vector);
+    }
 
   /**
    * Returns entity position in a readable string form

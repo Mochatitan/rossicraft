@@ -11,6 +11,8 @@ export class Player extends Entity{
 
     devMode = false;
 
+    autoJump = true;
+
     radius = 0.5;
     height = 1.75;
     jumpSpeed = 10;
@@ -160,13 +162,12 @@ export class Player extends Entity{
                 this.velocity.set(0, 0, 0);
                 break;
             case 'Space':
-                if(this.onGround) {
-                    this.velocity.y += this.jumpSpeed;
-                }
+                this.jump();
                 // this.keysPressed.SPACE = true;
         }
     }
 
+    
     onKeyUp(event){
         console.log("onKeyUp");
         switch(event.code){
