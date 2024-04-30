@@ -1,8 +1,17 @@
 import * as THREE from 'three';
 import { Entity } from './entity';
 
+const collisionMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    transparent: true,
+    opacity: 0.2
+});
+
+const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
+
 export class Pig extends Entity{
 
+    
     textureLoader = new THREE.TextureLoader();
 
     textures = {
@@ -27,6 +36,8 @@ export class Pig extends Entity{
         new THREE.MeshLambertMaterial({ map: this.textures.pigBody })  // back
       ];
 
+    pigGroup = new THREE.Group();
+
     bodyShape = new THREE.BoxGeometry(0.5, 0.5, 0.8);
     bodySprite = new THREE.Mesh( this.bodyShape, this.bodyMaterial ); 
 
@@ -39,7 +50,7 @@ export class Pig extends Entity{
     jumpSpeed = 10;
     onGround = false;
 
-    maxSpeed = 5;
+    maxSpeed = 1;
     flySpeed = 3;
 
     position = new THREE.Vector3();
@@ -55,18 +66,27 @@ export class Pig extends Entity{
         this.position.set(32, 66, 25);
         this.rotation.set(3.5, 3.5, 3.5);
 
-        this.goalBlock.set(32,64,40);
+        this.goalBlock.set(26,59,40);
 
-        
-        scene.add(this.bodySprite);
-        scene.add(this.headSprite);
-
-        // Wireframe mesh visualizing the player's bounding cylinder
         this.boundsHelper = new THREE.Mesh(
             new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
             new THREE.MeshBasicMaterial({ wireframe: true})
         );
+
+        this.pigGroup.position.set(32,66,25);
+        this.pigGroup.add(this.bodySprite);
+        this.pigGroup.add(this.headSprite);
+        //this.pigGroup.add(this.boundsHelper);
+
+        scene.add(this.pigGroup);
+
         scene.add(this.boundsHelper);
+
+        this.addGoalHelper(scene);
+        // Wireframe mesh visualizing the player's bounding cylinder
+        
+        this.headSprite.position.y = 1;
+        
 
     }
 
@@ -93,7 +113,7 @@ export class Pig extends Entity{
 
     applyInputs(dt) {
             this.velocity.x = 0;
-            this.velocity.z = 0.3;
+            //this.velocity.z = 0.3;
 
             // if(this.keysPressed.W){this.velocity.z += this.maxSpeed;}
             // if(this.keysPressed.A){this.velocity.x -= this.maxSpeed;}
@@ -111,43 +131,30 @@ export class Pig extends Entity{
 
             this.position.y += this.velocity.y *dt;
 
-        this.bodySprite.position.x = this.position.x;
-        this.bodySprite.position.y = this.position.y - (0.75 * this.height) + 0.25;
-        this.bodySprite.position.z = this.position.z;
+            // this.bodySprite.position.x = this.position.x;
+            // this.bodySprite.position.y = this.position.y - (0.75 * this.height) + 0.25;
+            // this.bodySprite.position.z = this.position.z;
 
-        this.headSprite.position.x = this.position.x;
-        this.headSprite.position.y = this.position.y;
-        this.headSprite.position.z = this.position.z + 0.6;
+            // this.headSprite.position.x = this.position.x;
+            // this.headSprite.position.y = this.position.y;
+            // this.headSprite.position.z = this.position.z + 0.6;
 
-        // this.rotation.x += 1;
+            const dx = ((this.goalBlock.x - this.position.x));
+            const dz = ((this.goalBlock.z - this.position.z));
+            const d = Math.sqrt((dx*dx) + (dz*dz));
 
-        // this.bodySprite.rotation.copy(this.rotation);
-        // this.bodySprite.rotateY(0.05 * dt);
+            const xvel = dx/d;
+            const zvel = dz/d;
 
-        // this.position.angleTo(this.rotation);
+            this.position.x += xvel * dt * this.maxSpeed;
+            this.position.z += zvel * dt * this.maxSpeed;
 
-        // this.bodySprite.lookAt(this.goalBlock);
+            this.pigGroup.position.x = this.position.x;
+            this.pigGroup.position.y = this.position.y;
+            this.pigGroup.position.z = this.position.z;
 
-        // this.headSprite.lookAt(this.goalBlock);
-
-
-        // const e = new THREE.Euler( 0, 3.14, 0, 'XYZ' );
-        // const q = new THREE.Quaternion().setFromEuler( e );
-        // const v = new THREE.Vector3( 0, 0, 1).applyQuaternion( q );
-
-        // const offset = 1; // world units
-        // this.position.add( v.multiplyScalar( offset * dt ) );
-
-        // //this.bodySprite.rotation.setFromQuaternion(q);
-        // //this.headSprite.rotation.setFromScalar(v.multiplyScalar(offset * dt));
-        // this.headSprite.lookAt(this.goalBlock);
-        // //this.bodySprite.setRotationFromEuler(e);
-        // this.bodySprite.setRotationFromEuler(e);
-        // //this.rotation.applyEuler(e);
-        // console.log( v.multiplyScalar(offset * dt));
-
-        const dx = this.goalBlock.x - this.position.x;
-        //this.position.x += (this.goalBlock.position.x - this.position.x);
+            this.headSprite.lookAt(this.goalBlock);
+            //this.bodySprite.lookAt(this.goalBlock);
 
     }
 
@@ -174,4 +181,22 @@ export class Pig extends Entity{
     str += `Z: ${this.position.z.toFixed(3)}`;
     return str;
   }
+    /**
+   * Visualizes the block the player is colliding with
+   * @param {THREE.Object3D} block 
+   */
+    addGoalHelper(scene) {
+        const blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);
+        blockMesh.position.copy(this.goalBlock);
+        scene.add(blockMesh);
+      }
+}
+
+function percentChance(chance){
+    let random = Math.random();
+    if(random < chance){
+        return true;
+    } else {
+        return false;
+    }
 }
