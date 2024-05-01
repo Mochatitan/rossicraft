@@ -12,7 +12,8 @@ const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
 
 export class Pig extends Entity{
 
-    
+    ADHD = 0.01; //chance it finds another block each frame
+
     autoJump = true;
     
     textureLoader = new THREE.TextureLoader();
@@ -55,7 +56,7 @@ export class Pig extends Entity{
     jumpSpeed = 10;
     onGround = false;
 
-    goalBlockRange = 5;
+    goalBlockRange = 7;
 
     maxSpeed = 3;
     flySpeed = 3;
@@ -221,7 +222,7 @@ export class Pig extends Entity{
 
 
             // document.getElementById("player-position").innerHTML = this.toString();
-            //this.jump();
+            this.jump();
     }
 
     inGoalBlock(){

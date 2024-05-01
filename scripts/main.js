@@ -57,6 +57,20 @@ const player = new Player(scene);
 
 const pig = new Pig(scene);
 
+const pigCount = 50;
+
+const pigs = [
+    // new Pig(scene),
+    // new Pig(scene),
+    // new Pig(scene),
+    // new Pig(scene),
+    // new Pig(scene),
+];
+
+for(let a = 0; a < pigCount; a++){
+    pigs.push(new Pig(scene));
+}
+
 const physics = new Physics(scene);
 
 // Lights Setup
@@ -90,6 +104,9 @@ function animate(){
     physics.update(dt, player, world);
     physics.update(dt, pig, world);
     
+    for(let a = 0; a < pigs.length; a++){
+        physics.update(dt, pigs[a], world);
+    }
     //console.log(dt);
     if(percentChance(0.015) === true){
         // pig.lookAtVector(player.position);
@@ -97,10 +114,21 @@ function animate(){
 
     if(pig.inGoalBlock()){
             //console.log('in goal block');
-        if(percentChance(0.9) === true){
+        if(percentChance(pig.ADHD) === true){
             console.log("randomizing");
             pig.randomizeGoalBlock(world);
         }
+    }
+
+    for(let a = 0; a < pigs.length; a++){
+        if(pigs[a].inGoalBlock()){
+            //console.log('in goal block');
+        if(percentChance(pigs[a].ADHD) === true){
+            console.log("randomizing");
+            pigs[a].randomizeGoalBlock(world);
+        }
+    }
+
     }
 
     if(player.playerCamera === false){
