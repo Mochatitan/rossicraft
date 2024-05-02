@@ -51,7 +51,7 @@ export class Player extends Entity{
     constructor(scene) {
         super(scene);
 
-        this.position.set(32, 64, 32);
+        this.position.set(32, 65, 32);
         this.camera.position.set(32, 64, 32);
 
         scene.add(this.camera);
