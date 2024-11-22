@@ -18,7 +18,7 @@ export const achivements = {
     sacrifice: {
         id: 10,
         name: 'Sacrifice',
-        description: "throw every item in the game into lava",
+        description: "throw an item into lava",
         achieved: false,
 
     }
