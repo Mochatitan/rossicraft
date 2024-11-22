@@ -18,7 +18,7 @@ export class World extends THREE.Group {
     data = [];
 
     params = {
-        seed: 0,
+        seed: 5,
         terrain : {
             scale: 64,
             magnitude: 0.05,
@@ -29,9 +29,11 @@ export class World extends THREE.Group {
         
     threshold = 0.5;
 
-    constructor(size = {width:64, height: 80}) { //if no size is passed, default will be 32
+    constructor(seedprms, size = {width:64, height: 80}) { //if no size is passed, default will be 32
         super();
         this.size = size;
+        console.log(seedprms);
+        this.params = seedprms;
     }
 
     generate(){

@@ -18,8 +18,48 @@ import { Pig } from './pig.js';
 //   });
 //music.sweden.play();
 
+// frontend/src/main.js
+import axios from 'axios';
+
+// Fetch data from the backend API
+// axios.get('http://localhost:3000/api')
+//   .then(response => {
+//     // Output the message from the backend
+//     const message = response.data.message;
+//     console.log(message);
+//   })
+//   .catch(error => {
+//     console.error('Error fetching data from backend:', error);
+//   });
+
+// Fetch data from the backend API (GET request)
+//let seedparams = {};
 
 
+let seedparams = {};
+// axios.get('http://localhost:3000/api/params')
+//   .then(response => {
+    
+//     console.log(response.data);
+    
+//     seedparams = response.data; 
+//   })
+//   .catch(error => {
+//     console.error('Error fetching data from backend:', error);
+//   });
+async function fetchSeedParams() {
+    try {
+      const response = await axios.get('http://localhost:3000/api/params');
+      seedparams = response.data;
+      console.log(seedparams);
+      // Proceed with the rest of your program here
+    } catch (error) {
+      console.error('Error fetching data from backend:', error);
+    }
+  }
+
+await fetchSeedParams();
+console.log(seedparams);
 const devmode = true;
 
 const stats = new Stats(); //stats for fps and stuff
@@ -49,7 +89,8 @@ controls.target.set(16, 0, 16); //make camera look at centre of world
 
 // Scene Setup
 const scene = new THREE.Scene();
-const world = new World();
+
+const world = new World(seedparams);
 world.generate();
 scene.add(world);
 
