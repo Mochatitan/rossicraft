@@ -7,7 +7,7 @@ import { createUI } from './ui';
 import { Player } from './player';
 import { Physics } from './physics';
 
-import {Howl, Howler} from 'howler';
+import { Howl, Howler } from 'howler';
 //import { music } from './music.js'
 import { Music } from './music.js';
 
@@ -75,32 +75,33 @@ function setupLights() {
 }
 
 //add special stuff for the dev
-if(devmode){
+if (devmode) {
     document.body.append(stats.dom);
 }
 
 
 // Render Loop
 let previousTime = performance.now();
-function animate(){
+function animate() {
     let currentTime = performance.now();
-    let dt = (currentTime - previousTime) /1000; //time since last frame in seconds
+    let dt = (currentTime - previousTime) / 1000; //time since last frame in seconds
 
     requestAnimationFrame(animate);
-    physics.update(dt, player, world);
     physics.update(dt, pig, world);
-    
-    if(percentChance(0.015) === true){
+    physics.update(dt, player, world);
+
+
+    if (percentChance(0.015) === true) {
         pig.lookAtVector(player.position);
     }
-    if(player.playerCamera === false){
+    if (player.playerCamera === false) {
         renderer.render(scene, orbitCamera);
-    } else if(player.playerCamera === true){
+    } else if (player.playerCamera === true) {
         renderer.render(scene, player.camera);
     }
 
     //animate stuff for dev
-    if(devmode){
+    if (devmode) {
         stats.update();
     }
 
@@ -115,14 +116,14 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-function percentChance(chance){
+function percentChance(chance) {
     let random = Math.random();
-    if(random < chance){
+    if (random < chance) {
         return true;
     } else {
         return false;
     }
 }
 setupLights();
-if(devmode){ createUI(world, player, physics, music);}
+if (devmode) { createUI(world, player, physics, music); }
 animate();

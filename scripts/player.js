@@ -3,13 +3,13 @@ import { PointerLockControls } from './PointerLockControls.js';
 import { Entity } from './entity.js';
 
 const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
-const sprite = new THREE.Mesh( geometry, material ); 
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const sprite = new THREE.Mesh(geometry, material);
 
 
-export class Player extends Entity{
+export class Player extends Entity {
 
-    devMode = false;
+    devMode = true;
 
     radius = 0.5;
     height = 1.75;
@@ -66,11 +66,11 @@ export class Player extends Entity{
         // Wireframe mesh visualizing the player's bounding cylinder
         this.boundsHelper = new THREE.Mesh(
             new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
-            new THREE.MeshBasicMaterial({ wireframe: true})
+            new THREE.MeshBasicMaterial({ wireframe: true })
         );
         scene.add(this.boundsHelper);
 
-        this.boundsHelper.visible = false;
+        this.boundsHelper.visible = true;
     }
 
     /**
@@ -83,7 +83,7 @@ export class Player extends Entity{
         this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
         return this.#worldVelocity;
     }
-    
+
     /**
      * Applies a change in velocity 'dv' that is specified in the world frame
      * @param {THREE.Vector3} dv
@@ -94,29 +94,29 @@ export class Player extends Entity{
         this.velocity.add(dv);
     }
     applyInputs(dt) {
-        if(this.controls.isLocked) {
+        if (this.controls.isLocked) {
             this.velocity.x = 0;
             this.velocity.z = 0;
 
-            if(this.keysPressed.W){this.velocity.z += this.maxSpeed;}
-            if(this.keysPressed.A){this.velocity.x -= this.maxSpeed;}
-            if(this.keysPressed.S){this.velocity.z -= this.maxSpeed;}
-            if(this.keysPressed.D){this.velocity.x += this.maxSpeed;}
+            if (this.keysPressed.W) { this.velocity.z += this.maxSpeed; }
+            if (this.keysPressed.A) { this.velocity.x -= this.maxSpeed; }
+            if (this.keysPressed.S) { this.velocity.z -= this.maxSpeed; }
+            if (this.keysPressed.D) { this.velocity.x += this.maxSpeed; }
 
 
-            if(this.keysPressed.SPACE){this.velocity.y += this.flySpeed;}
+            if (this.keysPressed.SPACE) { this.velocity.y += this.flySpeed; }
             // this.velocity.x = this.input.x;
             // this.velocity.z = this.input.z;
-            
+
             this.controls.moveRight(this.velocity.x * dt);
             this.controls.moveForward(this.velocity.z * dt);
 
-            this.position.y += this.velocity.y *dt;
+            this.position.y += this.velocity.y * dt;
 
             document.getElementById("player-position").innerHTML = this.toString();
         }
 
-       
+
 
         sprite.position.x = this.position.x;
         sprite.position.y = this.position.y;
@@ -137,12 +137,12 @@ export class Player extends Entity{
     //     return this.camera.position;
     // }
 
-    onKeyDown(event){
-        if (!this.controls.isLocked){
+    onKeyDown(event) {
+        if (!this.controls.isLocked) {
             this.controls.lock();
         }
 
-        switch(event.code){
+        switch (event.code) {
             case 'KeyW':
                 this.keysPressed.W = true;
                 break;
@@ -160,16 +160,16 @@ export class Player extends Entity{
                 this.velocity.set(0, 0, 0);
                 break;
             case 'Space':
-                if(this.onGround) {
+                if (this.onGround) {
                     this.velocity.y += this.jumpSpeed;
                 }
-                // this.keysPressed.SPACE = true;
+            // this.keysPressed.SPACE = true;
         }
     }
 
-    onKeyUp(event){
+    onKeyUp(event) {
         console.log("onKeyUp");
-        switch(event.code){
+        switch (event.code) {
             case 'KeyW':
                 this.keysPressed.W = false;
                 break;
@@ -187,26 +187,26 @@ export class Player extends Entity{
         }
     }
 
-    toggleCamera(){
+    toggleCamera() {
         console.log("toggleCamera");
         this.playerCamera = !this.playerCamera;
     }
 
-  /**
-   * Returns player position in a readable string form
-   * @returns {string}
-   */
-  toString() {
-    let str = '';
-    str += `X: ${this.camera.position.x.toFixed(3)} `;
-    str += `Y: ${this.camera.position.y.toFixed(3)} `;
-    str += `Z: ${this.camera.position.z.toFixed(3)}`;
-    return str;
-  }
+    /**
+     * Returns player position in a readable string form
+     * @returns {string}
+     */
+    toString() {
+        let str = '';
+        str += `X: ${this.camera.position.x.toFixed(3)} `;
+        str += `Y: ${this.camera.position.y.toFixed(3)} `;
+        str += `Z: ${this.camera.position.z.toFixed(3)}`;
+        return str;
+    }
 
-  toggleDevMode(){
+    toggleDevMode() {
 
-    this.devMode = !this.devMode;
+        this.devMode = !this.devMode;
 
-  }
+    }
 }
