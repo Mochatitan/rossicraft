@@ -25,7 +25,7 @@ export class Physics {
     constructor(scene) {
 
         this.helpers = new THREE.Group();
-        this.helpers.visible = false;
+        this.helpers.visible = true;
 
         scene.add(this.helpers);
     }
